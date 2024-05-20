@@ -7,8 +7,14 @@ from streamlit.connections import SQLConnection
 CONNECTION_NAME = "sqlite-db"
 DB_URL = "sqlite:///data/data.sqlite"
 VALID_TABLE_NAMES = [
-    "pet_owners",
-    "chinook_album",
+    "user",
+    "messages",
+    "user_rating",
+    "kitchen",
+    "kitchen_applicance",
+    "kitchen_image",
+    "kitchen_rating",
+    "invoices"
 ]
 
 
@@ -23,119 +29,215 @@ def get_connection() -> SQLConnection:
 
 def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
     if dataset not in VALID_TABLE_NAMES:
-        errmsg = f"Invalid dataset name. Must choose from: {', '.join(VALID_TABLE_NAMES)}"
+        errmsg = f"Invalid dataset name. Must choose from: {
+            ', '.join(VALID_TABLE_NAMES)}"
         raise RuntimeError(errmsg)
 
-    if dataset == "pet_owners":
-        # From https://docs.streamlit.io/library/advanced-features/connecting-to-data
-        with conn.session as s:
-            s.execute("CREATE TABLE IF NOT EXISTS pet_owners (person TEXT, pet TEXT);")
-            s.execute("DELETE FROM pet_owners;")
-            pet_owners = [
-                {"person": "jerry", "pet": "fish"},
-                {"person": "barbara", "pet": "cat"},
-                {"person": "alex", "pet": "puppy"},
-            ]
-            s.execute(
-                text("INSERT INTO pet_owners (person, pet) VALUES (:person, :pet)"),
-                pet_owners,
-            )
-            s.commit()
-    elif dataset == "chinook_album":
-        # modified from https://github.com/lerocha/chinook-database/releases
-        drop_sql = "drop table if exists chinook_album"
-        create_sql = """CREATE TABLE chinook_album
-(
-    AlbumId INTEGER  NOT NULL,
-    Title TEXT  NOT NULL,
-    ArtistId INTEGER  NOT NULL,
-    CONSTRAINT PK_Album PRIMARY KEY  (AlbumId)
-);"""
-        insert_sql = """INSERT INTO chinook_album (AlbumId, Title, ArtistId) VALUES
-    (1, 'For Those About To Rock We Salute You', 1),
-    (2, 'Balls to the Wall', 2),
-    (3, 'Restless and Wild', 2),
-    (4, 'Let There Be Rock', 1),
-    (5, 'Big Ones', 3),
-    (6, 'Jagged Little Pill', 4),
-    (7, 'Facelift', 5),
-    (8, 'Warner 25 Anos', 6),
-    (9, 'Plays Metallica By Four Cellos', 7),
-    (10, 'Audioslave', 8),
-    (11, 'Out Of Exile', 8),
-    (12, 'BackBeat Soundtrack', 9),
-    (13, 'The Best Of Billy Cobham', 10),
-    (14, 'Alcohol Fueled Brewtality Live! [Disc 1]', 11),
-    (15, 'Alcohol Fueled Brewtality Live! [Disc 2]', 11),
-    (16, 'Black Sabbath', 12),
-    (17, 'Black Sabbath Vol. 4 (Remaster)', 12),
-    (18, 'Body Count', 13),
-    (19, 'Chemical Wedding', 14),
-    (20, 'The Best Of Buddy Guy - The Millenium Collection', 15)
-    ;
-        """
-        with conn.session as s:
-            s.execute(drop_sql)
-            s.execute(create_sql)
-            s.execute(insert_sql)
-            s.commit()
-
-
-def create_seed_data_REPLACEME(conn: SQLConnection) -> NoReturn | str:
-    TABLE_NAME = "REPLACEME"
-    with conn.session as s:
-        drop_sql = f"drop table if exists {TABLE_NAME}"
-
-        # last column's definition must not end in a comma.
-        create_sql = f"""create table {TABLE_NAME}(
-REPLACEMEcol1 TEXT,
-REPLACEMEcol2 TEXT,
-REPLACEMEcol3 TEXT
-);
-"""
-        # last row of data must not end in a comma.
-        insert_sql = f"""insert into {TABLE_NAME} values
-('REPLACEMErow1val1', 'REPLACEMErow1val2', 'REPLACEMErow1val3'),
-('REPLACEMErow2val1', 'REPLACEMErow2val2', 'REPLACEMErow2val3'),
-('REPLACEMErow3val1', 'REPLACEMErow3val2', 'REPLACEMErow3val3')
-;
-"""
-        s.execute(drop_sql)
-        s.execute(create_sql)
-        s.execute(insert_sql)
-        s.commit()
-
-    return TABLE_NAME
-
-
-# Completed example for shops
-def create_seed_data_shops(conn: SQLConnection) -> NoReturn | str:
-    TABLE_NAME = "shop"
-    with conn.session as s:
-        drop_sql = f"drop table if exists {TABLE_NAME}"
-
-        create_sql = f"""create table {TABLE_NAME}(
-shop_name TEXT,
-shop_address TEXT,
-shop_type TEXT,
-owner_contact TEXT
-);
-"""
-
-        insert_sql = f"""insert into {TABLE_NAME} values
-('DountClown', '100 Queen St, Auckland', 'Retail: Grocery', 'complaints@dountclown.nz'),
-('CsColour', '5 Cuba St, Wellington', 'Service: Clothing Design', 'r.lailton@cscolour.co.nz'),
-('CsColour', '6 Cuba St, Wellington', 'Service: Clothing Design', 'r.lailton@cscolour.co.nz'),
-('CsColour', '7 Cuba St, Wellington', 'Service: Clothing Design', 'r.lailton@cscolour.co.nz'),
-('CsColour', '8 Cuba St, Wellington', 'Service: Clothing Design', 'r.lailton@cscolour.co.nz'),
-('CsColour', '9 Cuba St, Wellington', 'Service: Clothing Design', 'r.lailton@cscolour.co.nz'),
-('CsColour', '10 Cuba St, Wellington', 'Service: Clothing Design', 'r.lailton@cscolour.co.nz'),
-('CsColour', '11 Cuba St, Wellington', 'Service: Clothing Design', 'r.lailton@cscolour.co.nz')
-;
-"""
-        s.execute(drop_sql)
-        s.execute(create_sql)
-        s.execute(insert_sql)
-        s.commit()
-
-    return TABLE_NAME
+    match dataset:
+        case "user":
+            with conn.session as s:
+                s.execute(
+                    "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, firstName TEXT, lastName TEXT, email TEXT, age INTEGER, user_type INTEGER REQUIRED);")
+                s.execute("DELETE FROM user;")
+                users = [
+                    {"firstName": "John", "lastName": "Doe",
+                        "email": "test@test.com", "age": 25, "user_type": 1},
+                    {"firstName": "Jane", "lastName": "Smith",
+                        "email": "cat@cats.com", "age": 30, "user_type": 2},
+                    {"firstName": "Alex", "lastName": "Johnson",
+                        "email": "alex@alexjohnson.com", "age": 35, "user_type": 3},
+                ]
+                s.execute(
+                    text("INSERT INTO user (firstName, lastName, email, age, user_type) VALUES (:firstName, :lastName, :email, :age, :user_type)"),
+                    users,
+                )
+                s.commit()
+        case "message":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS messages (
+                        id INTEGER PRIMARY KEY,
+                        message TEXT,
+                        sender_id INTEGER,
+                        recipient_id INTEGER,
+                        FOREIGN KEY(sender_id) REFERENCES user(id),
+                        FOREIGN KEY(recipient_id) REFERENCES user(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM messages;")
+                messages = [
+                    {"message": "Hello", "sender_id": 1, "recipient_id": 2},
+                    {"message": "How are you?", "sender_id": 2, "recipient_id": 1},
+                    {"message": "I'm good", "sender_id": 1, "recipient_id": 2},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO messages (message, sender_id, recipient_id) VALUES (:message, :sender_id, :recipient_id)"),
+                    messages,
+                )
+                s.commit()
+        case "user_rating":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS user_rating (
+                        id INTEGER PRIMARY KEY,
+                        review TEXT,
+                        rating INTEGER,
+                        rated_user_id INTEGER,
+                        rating_user_id INTEGER,
+                        FOREIGN KEY(rated_user_id) REFERENCES user(id),
+                        FOREIGN KEY(rating_user_id) REFERENCES user(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM user_rating;")
+                user_ratings = [
+                    {"review": "Great User, easy to work with", "rating": 5,
+                        "rated_user_id": 1, "rating_user_id": 2},
+                    {"review": "User left a massive mess", "rating": 1,
+                        "rated_user_id": 2, "rating_user_id": 1},
+                    {"review": None, "rating": 3,
+                        "rated_user_id": 1, "rating_user_id": 3},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO user_rating (review, rating, rated_user_id, rating_user_id) VALUES (:review, :rating, :rated_user_id, :rating_user_id)"),
+                    user_ratings,
+                )
+                s.commit()
+        case "kitchen":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS kitchen (
+                        id INTEGER PRIMARY KEY,
+                        address TEXT,
+                        owner_id INTEGER,
+                        size INTEGER,
+                        FOREIGN KEY(owner_id) REFERENCES user(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM kitchen;")
+                properties = [
+                    {"address": "123 Main St", "owner_id": 1, "size": 100},
+                    {"address": "456 Elm St", "owner_id": 2, "size": 200},
+                    {"address": "789 Oak St", "owner_id": 3, "size": 300},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO kitchen (address, owner_id, size) VALUES (:address, :owner_id, :size)"),
+                    properties,
+                )
+                s.commit()
+        case "kitchen_applicance":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS kitchen_applicance (
+                        id INTEGER PRIMARY KEY,
+                        name TEXT,
+                        kitchen_id INTEGER,
+                        FOREIGN KEY(kitchen_id) REFERENCES kitchen(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM kitchen_applicance;")
+                applicances = [
+                    {"name": "Fridge", "kitchen_id": 1},
+                    {"name": "Stove", "kitchen_id": 1},
+                    {"name": "Microwave", "kitchen_id": 2},
+                    {"name": "Dishwasher", "kitchen_id": 3},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO kitchen_applicance (name, kitchen_id) VALUES (:name, :kitchen_id)"),
+                    applicances,
+                )
+                s.commit()
+        case "kitchen_image":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS kitchen_image (
+                        id INTEGER PRIMARY KEY,
+                        image_name TEXT,
+                        kitchen_id INTEGER,
+                        FOREIGN KEY(kitchen_id) REFERENCES kitchen(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM kitchen_image;")
+                images = [
+                    {"image_name": "kitchen1.jpg", "kitchen_id": 1},
+                    {"image_name": "kitchen2.jpg", "kitchen_id": 1},
+                    {"image_name": "kitchen3.jpg", "kitchen_id": 2},
+                    {"image_name": "kitchen4.jpg", "kitchen_id": 3},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO kitchen_image (image_name, kitchen_id) VALUES (:image_name, :kitchen_id)"),
+                    images,
+                )
+                s.commit()
+        case "kitchen_rating":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS kitchen_rating (
+                        id INTEGER PRIMARY KEY,
+                        review TEXT,
+                        rating INTEGER,
+                        rated_kitchen_id INTEGER,
+                        rating_user_id INTEGER,
+                        FOREIGN KEY(rated_kitchen_id) REFERENCES kitchen(id),
+                        FOREIGN KEY(rating_user_id) REFERENCES user(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM kitchen_rating;")
+                kitchen_ratings = [
+                    {"review": "Great Kitchen, easy to use", "rating": 5,
+                        "rated_kitchen_id": 1, "rating_user_id": 2},
+                    {"review": "Kitchen was a mess", "rating": 1,
+                        "rated_kitchen_id": 2, "rating_user_id": 1},
+                    {"review": None, "rating": 3,
+                        "rated_kitchen_id": 1, "rating_user_id": 3},
+                ]
+                s.execute(
+                    text("INSERT INTO kitchen_rating (review, rating, rated_kitchen_id, rating_user_id) VALUES (:review, :rating, :rated_kitchen_id, :rating_user_id)"),
+                    kitchen_ratings,
+                )
+                s.commit()
+        case "invoices":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS invoices (
+                        id INTEGER PRIMARY KEY,
+                        invoice_number TEXT,
+                        invoice_date DATE DEFAULT CURRENT_DATE,
+                        amount REAL,
+                        user_id INTEGER,
+                        FOREIGN KEY(user_id) REFERENCES user(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM invoices;")
+                invoices = [
+                    {"invoice_number": "INV-001", "invoice_date": "2022-01-01",
+                        "amount": 100.00, "user_id": 1},
+                    {"invoice_number": "INV-002", "invoice_date": "2022-01-01",
+                        "amount": 200.00, "user_id": 2},
+                    {"invoice_number": "INV-003", "invoice_date": "2022-01-02",
+                        "amount": 300.00, "user_id": 3},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO invoices (invoice_number, amount, user_id) VALUES (:invoice_number, :amount, :user_id)"),
+                    invoices,
+                )
+                s.commit()
