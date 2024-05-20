@@ -9,7 +9,6 @@ st.warning("If you see errors, ensure you've created the table(s) first using th
 
 conn = util.get_connection()
 value = st.number_input("Search via Sender UID", step=1)
-print(value)
 
 result_df = conn.query(
     # change "person" to your columnname
