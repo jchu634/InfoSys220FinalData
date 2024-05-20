@@ -16,6 +16,24 @@ st.write("`Seed_And_Reset_All_Tables`: Creates all the tables in database and se
 st.info("This needs to be run before all of functions below.")
 st.write("\n")
 
+st.subheader("Add Message")
+
+st.subheader("Get Message")
+st.subheader("Add Rating")
+st.subheader("Get Specific User Rating/Review")
+st.subheader("Get All User Ratings/Reviews for a User")
+
+st.subheader("Add Kitchen")
+st.subheader("Update Kitchen Details")
+st.subheader("Add Images to Kitchen")
+
+st.subheader("Create Invoice")
+st.subheader("Get Invoice")
+st.subheader("Edit Invoice")
+st.subheader
+st.subheader
+st.subheader
+
 
 st.header("Legacy stuff from lab")
 #### This is legacy code, Use as a reference only, delete when done ####
