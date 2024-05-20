@@ -1,10 +1,10 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="INFOSYS220 streamlit exercises",
+    page_title="INFOSYS220 Group 45 Data App",
 )
 
-st.header("INFOSYS220 streamlit exercises and examples")
+st.header("INFOSYS220 Group 45 Data App")
 
 st.subheader("Read public gsheet")
 st.write("`Read_public_gsheet`: Connect to a public Google Sheet and display its contents as a Streamlit dataframe.")
