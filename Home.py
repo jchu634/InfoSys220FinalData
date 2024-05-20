@@ -1,23 +1,28 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="INFOSYS220 streamlit exercises",
+    page_title="INFOSYS220 Group 45 Data App",
 )
 
-st.header("INFOSYS220 streamlit exercises and examples")
+st.header("INFOSYS220 Group 45 Data App")
 
-st.subheader("Read public gsheet")
-st.write("`Read_public_gsheet`: Connect to a public Google Sheet and display its contents as a Streamlit dataframe.")
-st.info("You will modify this template as the Week 9 lab exercise.")
-st.write("\n")
-
-st.subheader("Create & read")
-st.write("`Create_&_read`: Show rows from a table in a sqlite database.")
-st.info("You will modify this template as the Week 9 lab exercise.")
+st.subheader("Create & read tables")
+st.write("`Create_&_read_tables`: Show rows from a table in a sqlite database.")
+# st.info("You will modify this template as the Week 9 lab exercise.")
 st.write("\n")
 
 st.subheader("Seeding data")
-st.write("`Create_&_read`: Example of how to create tabular data using provided code.")
+st.write("`Seed_And_Reset_All_Tables`: Creates all the tables in database and seeds them with data.")
+st.info("This needs to be run before all of functions below.")
+st.write("\n")
+
+
+st.header("Legacy stuff from lab")
+#### This is legacy code, Use as a reference only, delete when done ####
+
+
+st.subheader("Read public gsheet")
+st.write("`Read_public_gsheet`: Connect to a public Google Sheet and display its contents as a Streamlit dataframe.")
 st.info("You will modify this template as the Week 9 lab exercise.")
 st.write("\n")
 
