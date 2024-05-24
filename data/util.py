@@ -13,6 +13,7 @@ VALID_TABLE_NAMES = [
     "kitchen",
     "kitchen_image",
     "kitchen_rating",
+    "kitchen_availability",
     "invoices"
 ]
 
@@ -124,26 +125,57 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                     """
                     CREATE TABLE IF NOT EXISTS kitchen (
                         id INTEGER PRIMARY KEY,
+                        name TEXT,
+                        pricing TEXT,
                         address TEXT,
                         owner_id INTEGER,
                         appliances TEXT,
+                        description TEXT,
                         size INTEGER,
                         FOREIGN KEY(owner_id) REFERENCES user(id)
-                    );
+                    );                    
                     """
                 )
                 s.execute("DELETE FROM kitchen;")
                 properties = [
-                    {"address": "123 Main St", "owner_id": 1,
-                        "appliances": "toaster, oven", "size": 100},
-                    {"address": "456 Elm St", "owner_id": 2,
-                        "appliances": "oven, barbecue", "size": 200},
-                    {"address": "789 Oak St", "owner_id": 3,
-                        "appliances": "Air Fryer, Oven, Steamer", "size": 300},
+                    {"name": "Happy Kitchen", "pricing": "$10 an hour", "address": "123 Main St", "owner_id": 1,
+                        "appliances": "toaster, oven", "size": 100, "description": "A happy kitchen"},
+                    {"name": "Sad Kitchen", "pricing": "$10 an hour", "address": "456 Elm St", "owner_id": 2,
+                        "appliances": "oven, barbecue", "size": 200, "description": "A sad kitchen"},
+                    {"name": "Indifferent Kitchen", "pricing": "$10 an hour", "address": "789 Oak St", "owner_id": 3,
+                        "appliances": "Air Fryer, Oven, Steamer", "size": 300, "description": "An indifferent kitchen"},
                 ]
                 s.execute(
                     text(
-                        "INSERT INTO kitchen (address, owner_id, appliances, size) VALUES (:address, :owner_id, :appliances, :size)"),
+                        "INSERT INTO kitchen (name, pricing, address, owner_id, appliances, size, description) VALUES (:name, :pricing, :address, :owner_id, :appliances, :size, :description)"),
+                    properties,
+                )
+                s.commit()
+        case "kitchen_availability":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS kitchen_availability (
+                        id INTEGER PRIMARY KEY,
+                        kitchen_id INTEGER,
+                        start_date DATE,
+                        end_date DATE,
+                        FOREIGN KEY(kitchen_id) REFERENCES kitchen(id)
+                    );                    
+                    """
+                )
+                s.execute("DELETE FROM kitchen_availability;")
+                properties = [
+                    {"kitchen_id": 1, "start_date": "2022-01-01",
+                        "end_date": "2022-01-02"},
+                    {"kitchen_id": 2, "start_date": "2022-01-01",
+                        "end_date": "2022-01-02"},
+                    {"kitchen_id": 3, "start_date": "2022-01-01",
+                        "end_date": "2022-01-02"},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO kitchen_availability (kitchen_id, start_date, end_date) VALUES (:kitchen_id, :start_date, :end_date)"),
                     properties,
                 )
                 s.commit()
@@ -153,7 +185,7 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                     """
                     CREATE TABLE IF NOT EXISTS kitchen_image (
                         id INTEGER PRIMARY KEY,
-                        image_name TEXT,
+                        image TEXT,
                         kitchen_id INTEGER,
                         FOREIGN KEY(kitchen_id) REFERENCES kitchen(id)
                     );
@@ -161,14 +193,14 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 )
                 s.execute("DELETE FROM kitchen_image;")
                 images = [
-                    {"image_name": "kitchen1.jpg", "kitchen_id": 1},
-                    {"image_name": "kitchen2.jpg", "kitchen_id": 1},
-                    {"image_name": "kitchen3.jpg", "kitchen_id": 2},
-                    {"image_name": "kitchen4.jpg", "kitchen_id": 3},
+                    {"image": "kitchen1", "kitchen_id": 1},
+                    {"image": "kitchen2", "kitchen_id": 1},
+                    {"image": "kitchen3", "kitchen_id": 2},
+                    {"image": "kitchen4", "kitchen_id": 3},
                 ]
                 s.execute(
                     text(
-                        "INSERT INTO kitchen_image (image_name, kitchen_id) VALUES (:image_name, :kitchen_id)"),
+                        "INSERT INTO kitchen_image (image, kitchen_id) VALUES (:image, :kitchen_id)"),
                     images,
                 )
                 s.commit()
