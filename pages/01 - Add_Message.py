@@ -2,6 +2,7 @@ import streamlit as st
 from data import util
 
 st.title("Add a message to the database")
+st.warning("If you see errors, ensure you've created the table(s) first using the `Seed and Reset All Tables` pages.")
 
 table_name = "message"
 
