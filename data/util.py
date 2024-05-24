@@ -17,6 +17,17 @@ VALID_TABLE_NAMES = [
 ]
 
 
+def showResults(results_df, search_query):
+    num_rows_found = len(results_df)
+    st.write(f'{num_rows_found} row{"" if num_rows_found ==
+                                    1 else "s"} found for `{search_query}`')
+    st.dataframe(
+        results_df,
+        use_container_width=True,
+        hide_index=True,
+    )
+
+
 def get_connection() -> SQLConnection:
     # Let st.connection handle creating or reusing an existing connection
     return st.connection(
