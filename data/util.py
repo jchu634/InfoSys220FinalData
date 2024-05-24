@@ -8,14 +8,24 @@ CONNECTION_NAME = "sqlite-db"
 DB_URL = "sqlite:///data/data.sqlite"
 VALID_TABLE_NAMES = [
     "user",
-    "messages",
+    "message",
     "user_rating",
     "kitchen",
-    "kitchen_applicance",
     "kitchen_image",
     "kitchen_rating",
     "invoices"
 ]
+
+
+def showResults(results_df, search_query):
+    num_rows_found = len(results_df)
+    st.write(f'{num_rows_found} row{"" if num_rows_found ==
+                                    1 else "s"} found for `{search_query}`')
+    st.dataframe(
+        results_df,
+        use_container_width=True,
+        hide_index=True,
+    )
 
 
 def get_connection() -> SQLConnection:
@@ -37,7 +47,7 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
         case "user":
             with conn.session as s:
                 s.execute(
-                    "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, firstName TEXT, lastName TEXT, email TEXT, age INTEGER, user_type INTEGER REQUIRED);")
+                    "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, firstName TEXT, lastName TEXT, email TEXT, age INTEGER, user_type INTEGER NOT NULL);")
                 s.execute("DELETE FROM user;")
                 users = [
                     {"firstName": "John", "lastName": "Doe",
@@ -56,17 +66,17 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
             with conn.session as s:
                 s.execute(
                     """
-                    CREATE TABLE IF NOT EXISTS messages (
+                    CREATE TABLE IF NOT EXISTS message (
                         id INTEGER PRIMARY KEY,
                         message TEXT,
-                        sender_id INTEGER,
-                        recipient_id INTEGER,
+                        sender_id INTEGER NOT NULL,
+                        recipient_id INTEGER NOT NULL,
                         FOREIGN KEY(sender_id) REFERENCES user(id),
                         FOREIGN KEY(recipient_id) REFERENCES user(id)
                     );
                     """
                 )
-                s.execute("DELETE FROM messages;")
+                s.execute("DELETE FROM message;")
                 messages = [
                     {"message": "Hello", "sender_id": 1, "recipient_id": 2},
                     {"message": "How are you?", "sender_id": 2, "recipient_id": 1},
@@ -74,7 +84,7 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 ]
                 s.execute(
                     text(
-                        "INSERT INTO messages (message, sender_id, recipient_id) VALUES (:message, :sender_id, :recipient_id)"),
+                        "INSERT INTO message (message, sender_id, recipient_id) VALUES (:message, :sender_id, :recipient_id)"),
                     messages,
                 )
                 s.commit()
@@ -116,6 +126,7 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                         id INTEGER PRIMARY KEY,
                         address TEXT,
                         owner_id INTEGER,
+                        appliances TEXT,
                         size INTEGER,
                         FOREIGN KEY(owner_id) REFERENCES user(id)
                     );
@@ -123,39 +134,17 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 )
                 s.execute("DELETE FROM kitchen;")
                 properties = [
-                    {"address": "123 Main St", "owner_id": 1, "size": 100},
-                    {"address": "456 Elm St", "owner_id": 2, "size": 200},
-                    {"address": "789 Oak St", "owner_id": 3, "size": 300},
+                    {"address": "123 Main St", "owner_id": 1,
+                        "appliances": "toaster, oven", "size": 100},
+                    {"address": "456 Elm St", "owner_id": 2,
+                        "appliances": "oven, barbecue", "size": 200},
+                    {"address": "789 Oak St", "owner_id": 3,
+                        "appliances": "Air Fryer, Oven, Steamer", "size": 300},
                 ]
                 s.execute(
                     text(
-                        "INSERT INTO kitchen (address, owner_id, size) VALUES (:address, :owner_id, :size)"),
+                        "INSERT INTO kitchen (address, owner_id, appliances, size) VALUES (:address, :owner_id, :appliances, :size)"),
                     properties,
-                )
-                s.commit()
-        case "kitchen_applicance":
-            with conn.session as s:
-                s.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS kitchen_applicance (
-                        id INTEGER PRIMARY KEY,
-                        name TEXT,
-                        kitchen_id INTEGER,
-                        FOREIGN KEY(kitchen_id) REFERENCES kitchen(id)
-                    );
-                    """
-                )
-                s.execute("DELETE FROM kitchen_applicance;")
-                applicances = [
-                    {"name": "Fridge", "kitchen_id": 1},
-                    {"name": "Stove", "kitchen_id": 1},
-                    {"name": "Microwave", "kitchen_id": 2},
-                    {"name": "Dishwasher", "kitchen_id": 3},
-                ]
-                s.execute(
-                    text(
-                        "INSERT INTO kitchen_applicance (name, kitchen_id) VALUES (:name, :kitchen_id)"),
-                    applicances,
                 )
                 s.commit()
         case "kitchen_image":
