@@ -63,8 +63,7 @@ if submitted:
     for image in val_images:
         conn._instance.execute(
             f"insert into kitchen_image (kitchen_id, image) values (?, ?)",
-            [val_search_review_id, StringIO(
-                image.getvalue().decode("utf-8"))],
+            [val_search_review_id, image.getvalue()],
         )
 
     results_df = conn.query(

@@ -42,7 +42,7 @@ with st.form("form"):
     submitted = st.form_submit_button("Add new kitchen")
 
 if submitted:
-    if not val_name or val_pricing or val_address or val_owner_uid or val_appliances or val_date:
+    if not val_name or not val_pricing or not val_address or not val_owner_uid or not val_appliances or not val_date:
         st.write("Please fill in necessary fields.")
         st.stop()
     result = conn._instance.execute(
@@ -62,7 +62,7 @@ if submitted:
     for image in val_images:
         conn._instance.execute(
             f"insert into kitchen_image (kitchen_id, image) values (?, ?)",
-            [next_id, StringIO(image.getvalue().decode("utf-8"))],
+            [next_id, image.getvalue()],
         )
     row_count = conn.query(
         f"select count(1) from kitchen",
