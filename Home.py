@@ -16,15 +16,31 @@ st.write("`Seed_And_Reset_All_Tables`: Creates all the tables in database and se
 st.info("This needs to be run before all of functions below.")
 st.write("\n")
 
+st.subheader('View Table')
+st.write("`View_Table`: View a table from the database.")
+
+st.header('Use Case 1: Manage Inbox')
 st.subheader("Add Message")
+st.write("`Add_Message`: Add a message to the database.")
 
 st.subheader("Get Message")
-st.subheader("Add Rating")
-st.subheader("Edit Rating")
-st.subheader("Get Specific User Rating/Review")
-st.subheader("Get All User Ratings/Reviews for a User")
+st.write("`Get_Message`: Get messages from the database.")
 
+st.header('Use Case 2: Manage Review(s)/Rating(s)')
+st.info("Note: The schema handles Ratings as a Review without a description.")
+
+st.subheader("Add Review/Rating")
+st.write("`Add_Rating`: Add a Review/Rating to the database.")
+
+st.subheader("Edit Review/Rating")
+st.write("`Edit_Rating`: Edit a Review/Rating in the database.")
+
+st.subheader("Get Review/Rating")
+st.write("`Get_Rating`: Get Review(s)/Rating(s) from the database. Can be filtered using various parameters.")
+
+st.header('Use Case 3: Manage Listings')
 st.subheader("Add Kitchen")
+
 st.subheader("Update Kitchen Details")
 st.subheader("Add Images to Kitchen")
 
