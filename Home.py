@@ -20,6 +20,7 @@ st.subheader("Add Message")
 
 st.subheader("Get Message")
 st.subheader("Add Rating")
+st.subheader("Edit Rating")
 st.subheader("Get Specific User Rating/Review")
 st.subheader("Get All User Ratings/Reviews for a User")
 
