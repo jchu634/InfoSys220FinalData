@@ -16,7 +16,7 @@ VALID_TABLE_NAMES = [
     "kitchen_image",
     "kitchen_rating",
     "kitchen_availability",
-    "invoices"
+    # "invoice",
 ]
 
 
@@ -79,18 +79,29 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
         case "user":
             with conn.session as s:
                 s.execute(
-                    "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, firstName TEXT, lastName TEXT, email TEXT, age INTEGER, user_type INTEGER NOT NULL);")
+                    """CREATE TABLE IF NOT EXISTS user (
+                        id INTEGER PRIMARY KEY,
+                        firstName TEXT, 
+                        lastName TEXT, 
+                        email TEXT,
+                        bank_number TEXT, 
+                        age INTEGER,
+                        auto_payments BOOLEAN DEFAULT FALSE, 
+                        user_type INTEGER NOT NULL
+                    );
+                    """
+                )
                 s.execute("DELETE FROM user;")
                 users = [
                     {"firstName": "John", "lastName": "Doe",
-                        "email": "test@test.com", "age": 25, "user_type": 1},
+                        "email": "test@test.com", "bank_number": "1234-5678-9101-1121", "age": 25, "user_type": 1},
                     {"firstName": "Jane", "lastName": "Smith",
-                        "email": "cat@cats.com", "age": 30, "user_type": 2},
+                        "email": "cat@cats.com", "bank_number": "1234-5678-9101-1122", "age": 30, "user_type": 2},
                     {"firstName": "Alex", "lastName": "Johnson",
-                        "email": "alex@alexjohnson.com", "age": 35, "user_type": 3},
+                        "email": "alex@alexjohnson.com", "bank_number": "1234-5678-9101-1123", "age": 35, "user_type": 3},
                 ]
                 s.execute(
-                    text("INSERT INTO user (firstName, lastName, email, age, user_type) VALUES (:firstName, :lastName, :email, :age, :user_type)"),
+                    text("INSERT INTO user (firstName, lastName, email, bank_number, age, user_type) VALUES (:firstName, :lastName, :email, :bank_number, :age, :user_type)"),
                     users,
                 )
                 s.commit()
@@ -212,7 +223,6 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 s.commit()
         case "kitchen_image":
             with conn.session as s:
-                s.execute("DROP TABLE IF EXISTS kitchen_image;")
                 s.execute(
                     """
                     CREATE TABLE IF NOT EXISTS kitchen_image (
