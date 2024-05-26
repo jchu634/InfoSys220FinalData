@@ -16,7 +16,7 @@ VALID_TABLE_NAMES = [
     "kitchen_image",
     "kitchen_rating",
     "kitchen_availability",
-    # "invoice",
+    "fiscal_transaction",
 ]
 
 
@@ -111,6 +111,11 @@ def recreate_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 s.execute("DROP TABLE IF EXISTS kitchen_rating;")
                 s.commit()
             reset_table(conn, "kitchen_rating")
+        case "fiscal_transaction":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS fiscal_transaction;")
+                s.commit()
+            reset_table(conn, "fiscal_transaction")
 
 
 def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
@@ -319,32 +324,30 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                     kitchen_ratings,
                 )
                 s.commit()
-        # case "invoices":
-        #     with conn.session as s:
-        #         s.execute(
-        #             """
-        #             CREATE TABLE IF NOT EXISTS invoices (
-        #                 id INTEGER PRIMARY KEY,
-        #                 invoice_number TEXT,
-        #                 invoice_date DATE DEFAULT CURRENT_DATE,
-        #                 amount REAL,
-        #                 user_id INTEGER,
-        #                 FOREIGN KEY(user_id) REFERENCES user(id)
-        #             );
-        #             """
-        #         )
-        #         s.execute("DELETE FROM invoices;")
-        #         invoices = [
-        #             {"invoice_number": "INV-001", "invoice_date": "2022-01-01",
-        #                 "amount": 100.00, "user_id": 1},
-        #             {"invoice_number": "INV-002", "invoice_date": "2022-01-01",
-        #                 "amount": 200.00, "user_id": 2},
-        #             {"invoice_number": "INV-003", "invoice_date": "2022-01-02",
-        #                 "amount": 300.00, "user_id": 3},
-        #         ]
-        #         s.execute(
-        #             text(
-        #                 "INSERT INTO invoices (invoice_number, amount, user_id) VALUES (:invoice_number, :amount, :user_id)"),
-        #             invoices,
-        #         )
-        #         s.commit()
+        case "fiscal_transaction":
+            with conn.session as s:
+                s.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS fiscal_transaction (
+                        id INTEGER PRIMARY KEY,
+                        transaction_date DATE DEFAULT CURRENT_DATE,
+                        amount REAL,
+                        payor_user_id INTEGER,
+                        payee_user_id INTEGER,
+                        FOREIGN KEY(payor_user_id) REFERENCES user(id)
+                        FOREIGN KEY(payee_user_id) REFERENCES user(id)
+                    );
+                    """
+                )
+                s.execute("DELETE FROM fiscal_transaction;")
+                transactions = [
+                    {"amount": 100.00, "payor_user_id": 1, "payee_user_id": 2},
+                    {"amount": 200.00, "payor_user_id": 2, "payee_user_id": 3},
+                    {"amount": 300.00, "payor_user_id": 3, "payee_user_id": 1},
+                ]
+                s.execute(
+                    text(
+                        "INSERT INTO fiscal_transaction (amount, payor_user_id, payee_user_id) VALUES (:amount, :payor_user_id, :payee_user_id)"),
+                    transactions,
+                )
+                s.commit()
