@@ -58,9 +58,12 @@ st.write("`Toggle_User_Auto_Payments`: Enable/Disable user's auto payment flag i
 st.subheader("Update User Bank Info")
 st.write("`Update_User_Bank_Info`: Update user's bank number in the database.")
 
-st.subheader
-st.subheader
-st.subheader
+st.header('Use Case 5: Manage billing enquiries')
+st.subheader("Add Transaction")
+st.write("`Add_Transaction`: Add a transaction to the database.")
+
+st.subheader("Get Transaction")
+st.write("`Get_Transaction`: Get transactions from the database. Can be filtered using various parameters.")
 
 
 st.header("Legacy stuff from lab")
