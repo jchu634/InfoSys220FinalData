@@ -81,8 +81,6 @@ with st.form("form"):
     submitted = st.form_submit_button("Search")
 
 if submitted:
-    print(val_date_start)
-    print(val_date_end)
     result_df = conn.query(
         'SELECT * FROM fiscal_transaction WHERE transaction_date BETWEEN :val_date_start AND :val_date_end',
         params=dict(val_date_start=val_date_start, val_date_end=val_date_end),
