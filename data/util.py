@@ -16,7 +16,7 @@ VALID_TABLE_NAMES = [
     "kitchen_image",
     "kitchen_rating",
     "kitchen_availability",
-    "invoices"
+    # "invoice",
 ]
 
 
@@ -69,6 +69,50 @@ def showResultsWImages(results_df, search_query):
                      "Kitchen_ID: " + str(kitchen_id)] * len(images))
 
 
+def recreate_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
+    if dataset not in VALID_TABLE_NAMES:
+        errmsg = f"Invalid dataset name. Must choose from: {
+            ', '.join(VALID_TABLE_NAMES)}"
+        raise RuntimeError(errmsg)
+
+    match dataset:
+        case "user":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS user;")
+                s.commit()
+            reset_table(conn, "user")
+        case "message":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS message;")
+                s.commit()
+            reset_table(conn, "message")
+        case "user_rating":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS user_rating;")
+                s.commit()
+            reset_table(conn, "user_rating")
+        case "kitchen":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS kitchen;")
+                s.commit()
+            reset_table(conn, "kitchen")
+        case "kitchen_availability":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS kitchen_availability;")
+                s.commit()
+            reset_table(conn, "kitchen_availability")
+        case "kitchen_image":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS kitchen_image;")
+                s.commit()
+            reset_table(conn, "kitchen_image")
+        case "kitchen_rating":
+            with conn.session as s:
+                s.execute("DROP TABLE IF EXISTS kitchen_rating;")
+                s.commit()
+            reset_table(conn, "kitchen_rating")
+
+
 def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
     if dataset not in VALID_TABLE_NAMES:
         errmsg = f"Invalid dataset name. Must choose from: {
@@ -79,18 +123,29 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
         case "user":
             with conn.session as s:
                 s.execute(
-                    "CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, firstName TEXT, lastName TEXT, email TEXT, age INTEGER, user_type INTEGER NOT NULL);")
+                    """CREATE TABLE IF NOT EXISTS user (
+                        id INTEGER PRIMARY KEY,
+                        firstName TEXT, 
+                        lastName TEXT, 
+                        email TEXT,
+                        bank_number TEXT, 
+                        age INTEGER,
+                        auto_payments BOOLEAN DEFAULT FALSE, 
+                        user_type INTEGER NOT NULL
+                    );
+                    """
+                )
                 s.execute("DELETE FROM user;")
                 users = [
                     {"firstName": "John", "lastName": "Doe",
-                        "email": "test@test.com", "age": 25, "user_type": 1},
+                        "email": "test@test.com", "bank_number": "1234-5678-9101-1121", "age": 25, "user_type": 1},
                     {"firstName": "Jane", "lastName": "Smith",
-                        "email": "cat@cats.com", "age": 30, "user_type": 2},
+                        "email": "cat@cats.com", "bank_number": "1234-5678-9101-1122", "age": 30, "user_type": 2},
                     {"firstName": "Alex", "lastName": "Johnson",
-                        "email": "alex@alexjohnson.com", "age": 35, "user_type": 3},
+                        "email": "alex@alexjohnson.com", "bank_number": "1234-5678-9101-1123", "age": 35, "user_type": 3},
                 ]
                 s.execute(
-                    text("INSERT INTO user (firstName, lastName, email, age, user_type) VALUES (:firstName, :lastName, :email, :age, :user_type)"),
+                    text("INSERT INTO user (firstName, lastName, email, bank_number, age, user_type) VALUES (:firstName, :lastName, :email, :bank_number, :age, :user_type)"),
                     users,
                 )
                 s.commit()
@@ -212,7 +267,6 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 s.commit()
         case "kitchen_image":
             with conn.session as s:
-                s.execute("DROP TABLE IF EXISTS kitchen_image;")
                 s.execute(
                     """
                     CREATE TABLE IF NOT EXISTS kitchen_image (
@@ -265,32 +319,32 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                     kitchen_ratings,
                 )
                 s.commit()
-        case "invoices":
-            with conn.session as s:
-                s.execute(
-                    """
-                    CREATE TABLE IF NOT EXISTS invoices (
-                        id INTEGER PRIMARY KEY,
-                        invoice_number TEXT,
-                        invoice_date DATE DEFAULT CURRENT_DATE,
-                        amount REAL,
-                        user_id INTEGER,
-                        FOREIGN KEY(user_id) REFERENCES user(id)
-                    );
-                    """
-                )
-                s.execute("DELETE FROM invoices;")
-                invoices = [
-                    {"invoice_number": "INV-001", "invoice_date": "2022-01-01",
-                        "amount": 100.00, "user_id": 1},
-                    {"invoice_number": "INV-002", "invoice_date": "2022-01-01",
-                        "amount": 200.00, "user_id": 2},
-                    {"invoice_number": "INV-003", "invoice_date": "2022-01-02",
-                        "amount": 300.00, "user_id": 3},
-                ]
-                s.execute(
-                    text(
-                        "INSERT INTO invoices (invoice_number, amount, user_id) VALUES (:invoice_number, :amount, :user_id)"),
-                    invoices,
-                )
-                s.commit()
+        # case "invoices":
+        #     with conn.session as s:
+        #         s.execute(
+        #             """
+        #             CREATE TABLE IF NOT EXISTS invoices (
+        #                 id INTEGER PRIMARY KEY,
+        #                 invoice_number TEXT,
+        #                 invoice_date DATE DEFAULT CURRENT_DATE,
+        #                 amount REAL,
+        #                 user_id INTEGER,
+        #                 FOREIGN KEY(user_id) REFERENCES user(id)
+        #             );
+        #             """
+        #         )
+        #         s.execute("DELETE FROM invoices;")
+        #         invoices = [
+        #             {"invoice_number": "INV-001", "invoice_date": "2022-01-01",
+        #                 "amount": 100.00, "user_id": 1},
+        #             {"invoice_number": "INV-002", "invoice_date": "2022-01-01",
+        #                 "amount": 200.00, "user_id": 2},
+        #             {"invoice_number": "INV-003", "invoice_date": "2022-01-02",
+        #                 "amount": 300.00, "user_id": 3},
+        #         ]
+        #         s.execute(
+        #             text(
+        #                 "INSERT INTO invoices (invoice_number, amount, user_id) VALUES (:invoice_number, :amount, :user_id)"),
+        #             invoices,
+        #         )
+        #         s.commit()

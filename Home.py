@@ -6,9 +6,12 @@ st.set_page_config(
 
 st.header("INFOSYS220 Group 45 Data App")
 
-st.subheader("Create & read tables")
-st.write("`Create_&_read_tables`: Show rows from a table in a sqlite database.")
-# st.info("You will modify this template as the Week 9 lab exercise.")
+st.subheader("Create or view tables")
+st.write("`Create_or_view_tables`: Create or see tables with the option to reset them.")
+st.write("\n")
+
+st.subheader("Drop and Recreate tables")
+st.write("`Drop_And_Recreate_Tables`: Destroy previous table and recreate a fresh copy in its place.")
 st.write("\n")
 
 st.subheader("Seeding data")
@@ -40,13 +43,21 @@ st.write("`Get_Rating`: Get Review(s)/Rating(s) from the database. Can be filter
 
 st.header('Use Case 3: Manage Listings')
 st.subheader("Add Kitchen")
+st.write("`Add_Kitchen`: Add a Kitchen to the database.")
 
 st.subheader("Update Kitchen Details")
-st.subheader("Add Images to Kitchen")
+st.write("`Update_Kitchen_Details`: Update Kitchen details in the database.")
 
-st.subheader("Create Invoice")
-st.subheader("Get Invoice")
-st.subheader("Edit Invoice")
+st.subheader("Add Images to Kitchen")
+st.write("`Add_Images_To_Kitchen`: Add images to a Kitchen in the database.")
+
+st.header('Use Case 4: Manage billing')
+st.subheader("Toggle User Auto Payments")
+st.write("`Toggle_User_Auto_Payments`: Enable/Disable user's auto payment flag in the database.")
+
+st.subheader("Update User Bank Info")
+st.write("`Update_User_Bank_Info`: Update user's bank number in the database.")
+
 st.subheader
 st.subheader
 st.subheader
