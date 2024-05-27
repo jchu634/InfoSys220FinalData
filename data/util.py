@@ -161,6 +161,7 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                     CREATE TABLE IF NOT EXISTS message (
                         id INTEGER PRIMARY KEY,
                         message TEXT,
+                        message_title TEXT,
                         sender_id INTEGER NOT NULL,
                         recipient_id INTEGER NOT NULL,
                         FOREIGN KEY(sender_id) REFERENCES user(id),
@@ -170,13 +171,16 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 )
                 s.execute("DELETE FROM message;")
                 messages = [
-                    {"message": "Hello", "sender_id": 1, "recipient_id": 2},
-                    {"message": "How are you?", "sender_id": 2, "recipient_id": 1},
-                    {"message": "I'm good", "sender_id": 1, "recipient_id": 2},
+                    {"message": "Hello", "message_title": "Hi",
+                        "sender_id": 1, "recipient_id": 2},
+                    {"message": "How are you?", "message_title": "Re: Hi",
+                        "sender_id": 2, "recipient_id": 1},
+                    {"message": "I'm good", "message_title": "Re: Re: Hi",
+                        "sender_id": 1, "recipient_id": 2},
                 ]
                 s.execute(
                     text(
-                        "INSERT INTO message (message, sender_id, recipient_id) VALUES (:message, :sender_id, :recipient_id)"),
+                        "INSERT INTO message (message, message_title, sender_id, recipient_id) VALUES (:message, :message_title, :sender_id, :recipient_id)"),
                     messages,
                 )
                 s.commit()

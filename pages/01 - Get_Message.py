@@ -3,6 +3,21 @@ from data import util
 
 table_name = "message"
 
+st.title("Get Message(s) by Message ID")
+st.warning("If you see errors, ensure you've created the table(s) first using the `Seed and Reset All Tables` pages.")
+
+conn = util.get_connection()
+value = st.number_input("Search via Message ID", step=1)
+
+result_df = conn.query(
+    # change "person" to your columnname
+    f"select * from {table_name} where message_id = :value",
+    params=dict(value=value),
+    ttl=0,  # don't cache results so changes in the database are immediately retrieved
+)
+
+util.showResults(result_df, value)
+
 ############################################################################################################
 st.title("Get Message(s) by Sender UID")
 st.warning("If you see errors, ensure you've created the table(s) first using the `Seed and Reset All Tables` pages.")
