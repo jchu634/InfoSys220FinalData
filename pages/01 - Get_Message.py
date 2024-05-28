@@ -11,7 +11,7 @@ value = st.number_input("Search via Message ID", step=1)
 
 result_df = conn.query(
     # change "person" to your columnname
-    f"select * from {table_name} where message_id = :value",
+    f"select * from {table_name} where id = :value",
     params=dict(value=value),
     ttl=0,  # don't cache results so changes in the database are immediately retrieved
 )
