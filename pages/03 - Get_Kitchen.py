@@ -9,7 +9,7 @@ val_kitchen_id = st.number_input(
     "Kitchen ID (INT): ", step=1)
 
 result_df = conn.query(
-    'SELECT k.id, name, pricing, address, appliances, description, size, start_date || " - " || end_date AS availability_range\
+    'SELECT k.id, name, pricing, address, appliances, description, start_date || " - " || end_date AS availability_range\
     FROM kitchen AS k\
     INNER JOIN kitchen_availability AS ka ON k.id = ka.kitchen_id\
     WHERE kitchen_id = :val_search_uid',
@@ -27,11 +27,11 @@ conn = util.get_connection()
 val_owner_uid = st.number_input(
     "Kitchen Owner User ID (INT):", step=1)
 sort = st.selectbox(
-    "Sort by", ['id', 'name', 'pricing', 'address', 'owner_id', 'appliances', 'description', 'size'], key=1)
+    "Sort by", ['id', 'name', 'pricing', 'address', 'owner_id', 'appliances', 'description'], key=1)
 sort_direction = st.checkbox("Sort in descending order", value=False)
 
 result_df = conn.query(
-    'SELECT k.id, name, pricing, address, appliances, description, size, start_date || " - " || end_date AS availability_range\
+    'SELECT k.id, name, pricing, address, appliances, description, start_date || " - " || end_date AS availability_range\
     FROM kitchen AS k\
     INNER JOIN kitchen_availability AS ka ON k.id = ka.kitchen_id\
     WHERE owner_id = :val_search_uid',
@@ -54,7 +54,7 @@ sort = st.selectbox(
 sort_direction = st.checkbox("Sort in descending order", value=False, key=4)
 
 result_df = conn.query(
-    'SELECT k.id, name, pricing, address, appliances, description, size, strftime("%Y-%m-%d", start_date) || " - " || strftime("%Y-%m-%d", end_date) AS availability_range\
+    'SELECT k.id, name, pricing, address, appliances, description, strftime("%Y-%m-%d", start_date) || " - " || strftime("%Y-%m-%d", end_date) AS availability_range\
     FROM kitchen AS k\
     INNER JOIN kitchen_availability AS ka ON k.id = ka.kitchen_id\
     WHERE name = :val_search_uid',
@@ -74,11 +74,11 @@ conn = util.get_connection()
 val_address = st.text_input(
     "Search via Address: ")
 sort = st.selectbox(
-    "Sort by", ['id', 'name', 'pricing', 'address', 'owner_id', 'appliances', 'description', 'size'], key=5)
+    "Sort by", ['id', 'name', 'pricing', 'address', 'owner_id', 'appliances', 'description'], key=5)
 sort_direction = st.checkbox("Sort in descending order", value=False, key=6)
 
 result_df = conn.query(
-    'SELECT k.id, name, pricing, address, appliances, description, size, strftime("%Y-%m-%d", start_date) || " - " || strftime("%Y-%m-%d", end_date) AS availability_range\
+    'SELECT k.id, name, pricing, address, appliances, description, strftime("%Y-%m-%d", start_date) || " - " || strftime("%Y-%m-%d", end_date) AS availability_range\
     FROM kitchen AS k\
     INNER JOIN kitchen_availability AS ka ON k.id = ka.kitchen_id\
     WHERE name = :val_search_uid',

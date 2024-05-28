@@ -13,7 +13,6 @@ val_pricing = st.text_input("New Pricing: ")
 val_address = st.text_input("New Address: ")
 val_appliances = st.text_input("New Appliances (comma separated): ")
 val_description = st.text_input("New Description: ")
-val_size = st.number_input("New Size (Square Meters)(INT): ", step=1)
 
 # Kitchen_availability
 today = datetime.date.today()
@@ -27,7 +26,7 @@ is_new_images = st.checkbox("Replace Existing Images", value=False)
 
 # A query to get the current review details as a preview
 preview_results = conn.query(
-    'SELECT k.id, name, pricing, address, appliances, description, size, start_date || " - " || end_date AS availability_range\
+    'SELECT k.id, name, pricing, address, appliances, description, start_date || " - " || end_date AS availability_range\
         FROM kitchen AS k\
         INNER JOIN kitchen_availability AS ka ON k.id = ka.kitchen_id\
         WHERE k.id = :val_search_review_id',
@@ -46,9 +45,9 @@ with st.form("form"):
 
 if submitted:
     conn._instance.execute(
-        f"UPDATE kitchen SET name = :val_name, pricing = :val_pricing, address = :val_address, appliances = :val_appliances, description = :val_description, size = :val_size WHERE id = :val_search_review_id",
+        f"UPDATE kitchen SET name = :val_name, pricing = :val_pricing, address = :val_address, appliances = :val_appliances, description = :val_description WHERE id = :val_search_review_id",
         dict(val_name=val_name, val_pricing=val_pricing, val_address=val_address, val_appliances=val_appliances,
-             val_description=val_description, val_size=val_size, val_search_review_id=val_search_review_id)
+             val_description=val_description, val_search_review_id=val_search_review_id)
     )
     conn._instance.execute(
         f"UPDATE kitchen_availability SET start_date = :val_start_date, end_date = :val_end_date WHERE kitchen_id = :val_search_review_id",
@@ -67,7 +66,7 @@ if submitted:
         )
 
     results_df = conn.query(
-        'SELECT k.id, name, pricing, address, appliances, description, size, start_date || " - " || end_date AS availability_range\
+        'SELECT k.id, name, pricing, address, appliances, description, start_date || " - " || end_date AS availability_range\
         FROM kitchen AS k\
         INNER JOIN kitchen_availability AS ka ON k.id = ka.kitchen_id\
         WHERE k.id = :val_search_review_id',

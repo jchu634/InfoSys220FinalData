@@ -161,7 +161,6 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                     CREATE TABLE IF NOT EXISTS message (
                         id INTEGER PRIMARY KEY,
                         message TEXT,
-                        message_title TEXT,
                         sender_id INTEGER NOT NULL,
                         recipient_id INTEGER NOT NULL,
                         FOREIGN KEY(sender_id) REFERENCES user(id),
@@ -171,16 +170,13 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 )
                 s.execute("DELETE FROM message;")
                 messages = [
-                    {"message": "Hello", "message_title": "Hi",
-                        "sender_id": 1, "recipient_id": 2},
-                    {"message": "How are you?", "message_title": "Re: Hi",
-                        "sender_id": 2, "recipient_id": 1},
-                    {"message": "I'm good", "message_title": "Re: Re: Hi",
-                        "sender_id": 1, "recipient_id": 2},
+                    {"message": "Hello", "sender_id": 1, "recipient_id": 2},
+                    {"message": "How are you?", "sender_id": 2, "recipient_id": 1},
+                    {"message": "I'm good", "sender_id": 1, "recipient_id": 2},
                 ]
                 s.execute(
                     text(
-                        "INSERT INTO message (message, message_title, sender_id, recipient_id) VALUES (:message, :message_title, :sender_id, :recipient_id)"),
+                        "INSERT INTO message (message, sender_id, recipient_id) VALUES (:message, :sender_id, :recipient_id)"),
                     messages,
                 )
                 s.commit()
@@ -226,7 +222,6 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                         owner_id INTEGER,
                         appliances TEXT,
                         description TEXT,
-                        size INTEGER,
                         FOREIGN KEY(owner_id) REFERENCES user(id)
                     );                    
                     """
@@ -234,15 +229,15 @@ def reset_table(conn: SQLConnection, dataset: str) -> NoReturn | None:
                 s.execute("DELETE FROM kitchen;")
                 properties = [
                     {"name": "Happy Kitchen", "pricing": "$10 an hour", "address": "123 Main St", "owner_id": 1,
-                        "appliances": "toaster, oven", "size": 100, "description": "A happy kitchen"},
+                        "appliances": "toaster, oven", "description": "A happy kitchen"},
                     {"name": "Sad Kitchen", "pricing": "$10 an hour", "address": "456 Elm St", "owner_id": 2,
-                        "appliances": "oven, barbecue", "size": 200, "description": "A sad kitchen"},
+                        "appliances": "oven, barbecue", "description": "A sad kitchen"},
                     {"name": "Indifferent Kitchen", "pricing": "$10 an hour", "address": "789 Oak St", "owner_id": 3,
-                        "appliances": "Air Fryer, Oven, Steamer", "size": 300, "description": "An indifferent kitchen"},
+                        "appliances": "Air Fryer, Oven, Steamer", "description": "An indifferent kitchen"},
                 ]
                 s.execute(
                     text(
-                        "INSERT INTO kitchen (name, pricing, address, owner_id, appliances, size, description) VALUES (:name, :pricing, :address, :owner_id, :appliances, :size, :description)"),
+                        "INSERT INTO kitchen (name, pricing, address, owner_id, appliances, description) VALUES (:name, :pricing, :address, :owner_id, :appliances, :description)"),
                     properties,
                 )
                 s.commit()

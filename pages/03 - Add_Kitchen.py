@@ -16,7 +16,6 @@ val_address = st.text_input("Address: ")
 val_owner_uid = st.text_input("Owner's User ID (INT): ")
 val_appliances = st.text_input("Appliances (comma separated): ")
 val_description = st.text_input("(OPTIONAL) Description: ")
-val_size = st.number_input("(OPTIONAL) Size (Square Meters)(INT): ", step=1)
 
 # Kitchen_availability
 today = datetime.date.today()
@@ -34,7 +33,6 @@ list_of_values = [
     val_owner_uid,
     val_appliances,
     val_description,
-    val_size
 ]
 
 # We use a form to control when the page is (re)loaded and hence when the row is attempted to be added.
@@ -52,7 +50,7 @@ if submitted:
     next_id = (max_id or 0) + 1
     list_of_values = [next_id] + list_of_values
     conn._instance.execute(
-        f"insert into kitchen (id, name, pricing, address, owner_id, appliances, description, size) values (?,?, ?, ?, ?, ?, ?, ?)",
+        f"insert into kitchen (id, name, pricing, address, owner_id, appliances, description) values (?, ?, ?, ?, ?, ?, ?)",
         list_of_values,
     )
     conn._instance.execute(
