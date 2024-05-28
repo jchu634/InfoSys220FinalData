@@ -1,7 +1,7 @@
 import streamlit as st
 from data import util
 
-st.title("Edit a Transaction to the database")
+st.title("Edit a Transaction in the database")
 st.warning("If you see errors, ensure you've created the table(s) first using the `Seed and Reset All Tables` pages.")
 
 table_name = "fiscal_transaction"
