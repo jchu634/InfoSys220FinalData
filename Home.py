@@ -62,5 +62,8 @@ st.header('Use Case 5: Manage billing enquiries')
 st.subheader("Add Transaction")
 st.write("`Add_Transaction`: Add a transaction to the database.")
 
+st.subheader("Edit Transaction")
+st.write("`Edit_Transaction`: Edit a transaction in the database.")
+
 st.subheader("Get Transaction")
 st.write("`Get_Transaction`: Get transactions from the database. Can be filtered using various parameters.")
